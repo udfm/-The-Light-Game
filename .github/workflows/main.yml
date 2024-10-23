@@ -1,0 +1,121 @@
+# @title
+import random
+
+
+print("\n▄▄▄█████▓ ██░ ██ ▓█████     ██▓     ██▓  ▄████  ██░ ██ ▄▄▄█████▓\n▓  ██▒ ▓▒▓██░ ██▒▓█   ▀    ▓██▒    ▓██▒ ██▒ ▀█▒▓██░ ██▒▓  ██▒ ▓▒\n▒ ▓██░ ▒░▒██▀▀██░▒███      ▒██░    ▒██▒▒██░▄▄▄░▒██▀▀██░▒ ▓██░ ▒░\n░ ▓██▓ ░ ░▓█ ░██ ▒▓█  ▄    ▒██░    ░██░░▓█  ██▓░▓█ ░██ ░ ▓██▓ ░\n▒██▒ ░ ░▓█▒░██▓░▒████▒   ░██████▒░██░░▒▓███▀▒░▓█▒░██▓  ▒██▒ ░\n▒ ░░    ▒ ░░▒░▒░░ ▒░ ░   ░ ▒░▓  ░░▓   ░▒   ▒  ▒ ░░▒░▒  ▒ ░░\n  ░     ▒ ░▒░ ░ ░ ░  ░   ░ ░ ▒  ░ ▒ ░  ░   ░  ▒ ░▒░ ░    ░\n░       ░  ░░ ░   ░        ░ ░    ▒ ░░ ░   ░  ░  ░░ ░  ░\n░  ░  ░   ░  ░       ░  ░ ░        ░  ░  ░  ░  ░  ░░ ░  ░")
+
+# Define the game states and responses
+game_states = {
+    'start': {
+        'text': 'You wake up in a dimly lit room cuffed to a blood-stained hospital bed.',
+        'options': [
+            {'text': 'Check your pockets with your free hand...', 'next_state': 'cuffs'},
+            {'text': 'Cry for help...', 'next_state': 'hide'}
+        ]
+    },
+    'cuffs': {
+        'text': 'You find a paperclip and a penny in your pocket from school and you pick the lock on the hand cuff. You look around and see a door three cabinets and a sink...',
+        'options': [
+            {'text': 'Try the door.', 'next_state': 'door_locked'},
+            {'text': 'Check the cabinets.', 'next_state': 'check_cabinets'}
+        ]
+    },
+    'door_locked': {
+        'text': 'The door is locked.',
+        'options': [
+            {'text': 'Try to open the door.', 'next_state': 'try_open'},
+            {'text': 'Check the cabinets.', 'next_state': 'check_cabinets'}
+        ]
+    },
+    'try_open': {
+        'text': 'You struggle to open the door, but it remains closed.',
+        'options': [
+            {'text': 'Keep trying.', 'next_state': 'try_open'},
+            {'text': 'Accept defeat and hide.', 'next_state': 'hide'}
+        ]
+    },
+    'check_cabinets': {
+        'text': 'You find a key...',
+        'options': [
+            {'text': 'Use the key.', 'next_state': 'follow_passage'},
+            {'text': 'Stay in the room.', 'next_state': 'stay_room'}
+        ]
+    },
+    'stay_room': {
+        'text': 'You wonder why you\'re still here...',
+      'options': [
+          {'text': 'Get out.', 'next_state': 'check_cabinets'},
+          {'text': 'Cry for help.', 'next_state': 'hide'}
+      ]
+    },
+    'follow_passage': {
+        'text': 'You unlock the door and you see endless darkness, but then a light shines in the corner of your eye...',
+        'options': [
+            {'text': 'Approach the light.', 'next_state': 'approach_light'},
+            {'text': 'Turn back.', 'next_state': 'turn_back'}
+        ]
+    },
+    'approach_light': {
+        'text': 'The light reveals a path to freedom. You walk out into the night.',
+        'options': []
+    },
+    'turn_back': {
+        'text': 'You turn back and return to the room...',
+        'options': [
+            {'text': 'There is nothing here...', 'next_state': 'symbols'},
+            {'text': 'Hide in a corner.', 'next_state': 'hide'}
+        ]
+    },
+    'hide': {
+        'text': 'You cry for help.',
+        'options': [
+            {'text': 'Wait patiently.', 'next_state': 'wait_patience'},
+            {'text': 'Cry for help.', 'next_state': 'cry_for_help'}
+        ]
+    },
+    'wait_patience': {
+        'text': 'Time passes, and nothing happens.',
+        'options': [
+            {'text': 'Stay hidden.', 'next_state': 'hide'},
+            {'text': 'Get up.', 'next_state': ''}
+        ]
+    },
+    'cry_for_help': {
+        'text': 'Suddenly, the locked door opens and a man appears...',
+        'options': [
+            {'text': 'It\'s over. There is nothing you can do...', 'next_state': 'bad_ending'},
+            {'text': 'Don\'t resist. You know it\'s over...', 'next_state': 'bad_ending'}
+        ]
+    },
+    'bad_ending': {
+        'text': 'The man: Don\'t cry. We are just getting started. I will be the last thing you will ever see.',
+        'options': []
+    }
+}
+
+def play_game():
+    current_state = 'start'
+    while True:
+        state = game_states[current_state]
+        print(state['text'])
+
+        if not state['options']:
+            print("Game Over!")
+            break
+
+        for i, option in enumerate(state['options'], 1):
+            print(f"{i}. {option['text']}")
+
+        choice = input("Choose an option: ")
+        try:
+            next_state_index = int(choice) - 1
+            if next_state_index < len(state['options']):
+                next_state = state['options'][next_state_index]['next_state']
+                current_state = next_state
+            else:
+                print("Invalid choice. Please try again.")
+        except ValueError:
+            print("Please enter a valid number.")
+
+if __name__ == "__main__":
+    play_game()
